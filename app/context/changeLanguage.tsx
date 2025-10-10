@@ -58,16 +58,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     // Función de traducción con params simples: "Hello {name}"
     const t = useCallback(
         (key: keyof typeof dict["en"], params?: Record<string, string | number>) => {
-            const raw = dict[language][key] ?? String(key);
+            const raw = (dict[language][key] ?? String(key)) as string; // 👈 cast a string
             if (!params) return raw;
-            return Object.entries(params).reduce(
+
+            return Object.entries(params).reduce<string>(
                 (acc, [k, v]) => acc.replace(new RegExp(`{${k}}`, "g"), String(v)),
                 raw
             );
         },
         [language]
     );
-
     const value: languageContext = {
         isSidebarOpen,
         placement,
@@ -117,7 +117,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
                                     onClick={closeSidebar}
                                     className="text-xs mt-6 bg-white/10 hover:bg-white/20 rounded-lg px-4 py-1 transition"
                                 >
-                                   {t("close")}
+                                    {t("close")}
                                 </button>
                             </div>
                         </div>
