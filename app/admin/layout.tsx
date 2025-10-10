@@ -6,7 +6,9 @@ import { Sorts_Mill_Goudy } from 'next/font/google'
 
 const Sorts = Sorts_Mill_Goudy({
   variable: "--font-Sorts-Mill",
-  weight: "400"
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const geistSans = Geist({
@@ -30,9 +32,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-     
-        <div className="">
-          {children}
-        </div>
+
+    <div className="">
+      {children}
+    </div>
   );
 }

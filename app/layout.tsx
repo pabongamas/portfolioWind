@@ -10,7 +10,9 @@ import { LanguageProvider } from "./context/changeLanguage";
 
 const Sorts = Sorts_Mill_Goudy({
   variable: "--font-Sorts-Mill",
-  weight: "400"
+  weight: "400",
+   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistSans = Geist({
