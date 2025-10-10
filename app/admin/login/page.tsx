@@ -7,17 +7,20 @@ import { redirect } from 'next/navigation'
 import { loginAction } from "./actions"
 import { verifyAdminToken } from "./../../../lib/utils"
 
-export default async function LoginAdmin({ searchParams }: { searchParams?: { from?: string,error?: string } }) {
+export default async function LoginAdmin({ searchParams }: { searchParams?: Promise<{ from?: string; error?: string }>; }) {
+    const sp = (await searchParams) ?? {};
+    const from = sp.from ?? "/admin";
+    const error = sp.error;
     const cookieStore = await cookies();
     const token = cookieStore.get("admin_token")?.value
 
-  // 2) veirfy  JWT
-  const payload = await verifyAdminToken(token)
+    // 2) veirfy  JWT
+    const payload = await verifyAdminToken(token)
 
-  const nameApp=process.env.NEXT_PULIC_NAME_APP
+    const nameApp = process.env.NEXT_PUBLIC_NAME_APP ?? "App";
 
-  // 3)  if its already authenticated , redirecto to upload
-  if (payload) redirect(searchParams?.from || "/admin/upload")
+    // 3)  if its already authenticated , redirecto to upload
+    if (payload) redirect(from || "/admin/upload");
     return (
         <div className="grid min-h-svh lg:grid-cols-2 bg-white">
             <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -32,8 +35,9 @@ export default async function LoginAdmin({ searchParams }: { searchParams?: { fr
                 <div className="flex flex-1 items-center justify-center">
                     <div className="w-full max-w-xs">
                         <LoginForm formAction={loginAction}
-                            defaultFrom={searchParams?.from || "/admin"}
-                            error={searchParams?.error} />
+                           defaultFrom={from}
+                            error={error}
+                            />
                     </div>
                 </div>
             </div>
