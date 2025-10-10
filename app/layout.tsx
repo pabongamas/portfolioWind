@@ -1,6 +1,17 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Header from "./components/header";
+
+import { Sorts_Mill_Goudy } from 'next/font/google'
+import { Toaster } from "@/components/ui/sonner";
+import { VisualizerProvider } from "./context/visualizer";
+import { LanguageProvider } from "./context/changeLanguage";
+
+const Sorts = Sorts_Mill_Goudy({
+  variable: "--font-Sorts-Mill",
+  weight: "400"
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +34,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className=" scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${Sorts.variable} antialiased portBody`}
       >
-        {children}
+          <div className="mainContainer">
+        <VisualizerProvider>
+        <LanguageProvider>
+            <Header />
+            {children}
+            <Toaster />
+        </LanguageProvider>
+        </VisualizerProvider>
+          </div>
       </body>
     </html>
   );
