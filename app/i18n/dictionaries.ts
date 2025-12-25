@@ -9,6 +9,7 @@ export const dict = {
         close: "Close",
         //navbar items
         navbar_me: "Me",
+        navbar_home: "Home",
         navbar_design: "Design",
         navbar_ilustration: "Illustration / Animation",
         navbar_photography_video: "Photo & Video",
@@ -31,6 +32,7 @@ export const dict = {
         contact_description: "Feel free to reach out to me for any inquiries, collaborations, or just to say hello! You can contact me via email at",
         actions_save: "Save",
         actions_cancel: "Cancel",
+        language_selector: "Language",
     },
     es: {
         app_title: "Diseñado por Wind",
@@ -40,6 +42,7 @@ export const dict = {
         close: "Cerrar",
         //navbar items
         navbar_me: "Sobre mi",
+        navbar_home: "Inicio",
         navbar_design: "Diseño",
         navbar_ilustration: "Ilustración / Animación",
         navbar_photography_video: "Foto & Video",
@@ -62,5 +65,6 @@ export const dict = {
         contact_description: "No dudes en contactarme para cualquier consulta, colaboración, o simplemente para saludar! Puedes contactarme vía email a",
         actions_save: "Guardar",
         actions_cancel: "Cancelar",
+        language_selector: "Idioma",
     },
 } as const;

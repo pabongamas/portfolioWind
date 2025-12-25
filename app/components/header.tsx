@@ -4,18 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useLanguageContext } from "../context/changeLanguage";
-import { Span } from "next/dist/trace";
 
 export default function Header() {
-  const { openSidebar } = useLanguageContext();
-  const { t } = useLanguageContext();
+  const { openSidebar, isFloatElement, setIsFloatElement, isHonest, t } =
+    useLanguageContext();
 
-  const content = (
-    ""
-  );
-
+  const content = "";
 
   const navigationItems = [
+    { id: "home", label: t("navbar_home"), href: "/" },
     { id: "me", label: t("navbar_me"), href: "/me" },
     { id: "design", label: t("navbar_design"), href: "/design" },
     {
@@ -23,10 +20,9 @@ export default function Header() {
       label: t("navbar_ilustration"),
       href: "/illustration",
     },
-    { id: "photo&video", label:t("navbar_photography_video"), href: "/photo" },
-    { id: "tatto", label:t("navbar_tattoo") , href: "/tatto" },
+    { id: "photo&video", label: t("navbar_photography_video"), href: "/photo" },
+    { id: "tatto", label: t("navbar_tattoo"), href: "/tatto" },
     { id: "contact", label: t("navbar_contact"), href: "/contact" },
-
   ];
   const [activeSection, setActiveSection] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -63,7 +59,10 @@ export default function Header() {
         if (y !== lastScrollY.current) {
           lastScrollY.current = y;
           // progreso del 0 al 1 según el tramo [start, end]
-          const progress = Math.min(1, Math.max(0, (y - start) / (end - start)));
+          const progress = Math.min(
+            1,
+            Math.max(0, (y - start) / (end - start))
+          );
           // mapea progreso a tiempo del video
           if (durationRef.current > 0) {
             video.currentTime = progress * durationRef.current;
@@ -83,14 +82,15 @@ export default function Header() {
         video.removeEventListener("loadedmetadata", onMeta);
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
         window.removeEventListener("resize", calcBounds);
-
-
       };
     }, []);
 
     return (
       <>
-        <section ref={sectionRef} className="MainScreenImg">
+        <section
+          ref={sectionRef}
+          className="MainScreenImg relative  top-0 left-0 right-0 z-50 w-full"
+        >
           <div className="MainScreenImg_div">
             <video
               ref={videoRef}
@@ -99,8 +99,41 @@ export default function Header() {
               playsInline
               preload="metadata"
               src={"/videos/MeCover.mp4"}
-            >
-            </video>
+            ></video>
+          </div>
+          <div className="absolute w-full top-0 left-0 right-0 z-50">
+            <header className=" top-0 left-0 right-0 z-50 w-full backdrop-blur-lg  headerNoise relative">
+              <div className="flex items-center justify-between px-2 relative z-10">
+                <div className="asideLayout_options hover:text-neutral-50  text-neutral-50  p-2  transition-all duration-300 ">
+                  {t("app_title")}
+                </div>
+                <div className="asideLayout_options ">
+                  <nav className=" flex lg:space-x-25 md:space-x-4  justify-center items-center">
+                    {navigationItems.map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          className={`block asideLayout_options hover:text-neutral-50  text-neutral-50  p-2  transition-all duration-300    ${
+                            isActive ? "optionActiveNoBt" : ""
+                          }`}
+                          onClick={() => setActiveSection(item.id)}
+                        >
+                          <span> [ {item.label} ]</span>
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </div>
+                <span
+                  onClick={() => openSidebar(content, "left")}
+                  className="asideLayout_options hover:text-neutral-50  text-neutral-50  p-2  transition-all duration-300 "
+                >
+                  Language
+                </span>
+              </div>
+            </header>
           </div>
         </section>
       </>
@@ -167,8 +200,8 @@ export default function Header() {
   const ComponentMobileHeader = () => {
     return (
       <>
-        <header className="lg:hidden ">
-          <div className="flex items-center justify-between px-4 py-3">
+        <header className="lg:hidden backdrop-blur-md bg-white/10 border-b border-white/10  headerNoise relative">
+          <div className="flex items-center justify-between px-4 py-3 relative z-10">
             <div className="asideLayout_options text-sm">{t("app_title")}</div>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -176,22 +209,26 @@ export default function Header() {
               aria-label="Toggle menu"
             >
               <span
-                className={`w-5 h-0.5 bg-white transition-transform ${isMobileMenuOpen ? "rotate-45 translate-y-1.5" : ""
-                  }`}
+                className={`w-5 h-0.5 bg-white transition-transform ${
+                  isMobileMenuOpen ? "rotate-45 translate-y-1.5" : ""
+                }`}
               ></span>
               <span
-                className={`w-5 h-0.5 bg-white transition-opacity ${isMobileMenuOpen ? "opacity-0" : ""
-                  }`}
+                className={`w-5 h-0.5 bg-white transition-opacity ${
+                  isMobileMenuOpen ? "opacity-0" : ""
+                }`}
               ></span>
               <span
-                className={`w-5 h-0.5 bg-white transition-transform ${isMobileMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
-                  }`}
+                className={`w-5 h-0.5 bg-white transition-transform ${
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
+                }`}
               ></span>
             </button>
           </div>
           <div
-            className={`overflow-hidden transition-all duration-300 ${isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-              }`}
+            className={`overflow-hidden transition-all duration-300 ${
+              isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            }`}
           >
             <nav className="px-4 py-2  ">
               <div className="space-y-1">
@@ -201,8 +238,9 @@ export default function Header() {
                     <Link
                       key={item.id}
                       href={item.href}
-                      className={`block py-3 px-2 text-sm asideLayout_options optionLink rounded transition-colors ${isActive ? "optionActive" : ""
-                        }`}
+                      className={`block py-3 px-2 text-sm asideLayout_options optionLink rounded transition-colors ${
+                        isActive ? "optionActive" : ""
+                      }`}
                       onClick={() => {
                         setActiveSection(item.id);
                         setIsMobileMenuOpen(false);
@@ -217,45 +255,13 @@ export default function Header() {
           </div>
         </header>
       </>
-    )
-  }
+    );
+  };
 
   function HeaderPhoto() {
     return (
       <>
         <ComponentMobileHeader />
-        <aside className="asideLayout">
-          <div className="p-6 ">
-            <div className="asideLayout_options ">
-              <Link href="/" className="asideLayout_options optionLink ">
-                {t("app_title")}
-              </Link>
-            </div>
-          </div>
-          <div className="flex-1 flex flex-col justify-center px-6 items-center">
-            <nav className="space-y-6">
-              {navigationItems.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    className={`block asideLayout_options optionLink  ${isActive ? "optionActive" : ""
-                      }`}
-                    onClick={() => setActiveSection(item.id)}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-          <div className="p-6 ">
-            <span onClick={() => openSidebar(content, "left")} className="asideLayout_options optionLink ">
-              Language
-            </span>
-          </div>
-        </aside>
         <PhotoMainScreen />
       </>
     );
@@ -268,7 +274,7 @@ export default function Header() {
         <header className="headerMe">
           <div className="flex items-center justify-between px-12 ">
             <div className="asideLayout_options optionLink ">
-             {t("app_title")}
+              {t("app_title")}
             </div>
             <div className="asideLayout_options ">
               <nav className=" flex lg:space-x-6 md:space-x-4  justify-center items-center">
@@ -278,8 +284,9 @@ export default function Header() {
                     <Link
                       key={item.id}
                       href={item.href}
-                      className={`block asideLayout_options optionLink  ${isActive ? "optionActiveNoBt" : ""
-                        }`}
+                      className={`block asideLayout_options optionLink  ${
+                        isActive ? "optionActiveNoBt" : ""
+                      }`}
                       onClick={() => setActiveSection(item.id)}
                     >
                       {item.label}
@@ -295,7 +302,10 @@ export default function Header() {
                 </Link> */}
               </nav>
             </div>
-            <span onClick={() => openSidebar(content, "left")} className="asideLayout_options optionLink ">
+            <span
+              onClick={() => openSidebar(content, "left")}
+              className="asideLayout_options optionLink "
+            >
               Language
             </span>
           </div>
@@ -310,7 +320,7 @@ export default function Header() {
         <header className="headerMe">
           <div className="flex items-center justify-between px-12 ">
             <div className="asideLayout_options optionLink ">
-             {t("app_title")}
+              {t("app_title")}
             </div>
             <div className="asideLayout_options ">
               <nav className=" flex lg:space-x-6 md:space-x-4  justify-center items-center">
@@ -320,8 +330,9 @@ export default function Header() {
                     <Link
                       key={item.id}
                       href={item.href}
-                      className={`block asideLayout_options optionLink  ${isActive ? "optionActiveNoBt" : ""
-                        }`}
+                      className={`block asideLayout_options optionLink  ${
+                        isActive ? "optionActiveNoBt" : ""
+                      }`}
                       onClick={() => setActiveSection(item.id)}
                     >
                       {item.label}
@@ -337,7 +348,10 @@ export default function Header() {
                 </Link> */}
               </nav>
             </div>
-             <span onClick={() => openSidebar(content, "left")} className="asideLayout_options optionLink ">
+            <span
+              onClick={() => openSidebar(content, "left")}
+              className="asideLayout_options optionLink "
+            >
               Language
             </span>
           </div>
@@ -364,8 +378,9 @@ export default function Header() {
                     <Link
                       key={item.id}
                       href={item.href}
-                      className={`block asideLayout_options optionLink  ${isActive ? "optionActiveNoBt" : ""
-                        }`}
+                      className={`block asideLayout_options optionLink  ${
+                        isActive ? "optionActiveNoBt" : ""
+                      }`}
                       onClick={() => setActiveSection(item.id)}
                     >
                       {item.label}
@@ -374,7 +389,10 @@ export default function Header() {
                 })}
               </nav>
             </div>
-             <span onClick={() => openSidebar(content, "left")} className="asideLayout_options optionLink ">
+            <span
+              onClick={() => openSidebar(content, "left")}
+              className="asideLayout_options optionLink "
+            >
               Language
             </span>
           </div>
@@ -391,7 +409,7 @@ export default function Header() {
         <header className="headerMe">
           <div className="flex items-center justify-between px-12 ">
             <div className="asideLayout_options optionLink ">
-             {t("app_title")}
+              {t("app_title")}
             </div>
             <div className="asideLayout_options ">
               <nav className=" flex lg:space-x-6 md:space-x-4  justify-center items-center">
@@ -401,8 +419,9 @@ export default function Header() {
                     <Link
                       key={item.id}
                       href={item.href}
-                      className={`block asideLayout_options optionLink  ${isActive ? "optionActiveNoBt" : ""
-                        }`}
+                      className={`block asideLayout_options optionLink  ${
+                        isActive ? "optionActiveNoBt" : ""
+                      }`}
                       onClick={() => setActiveSection(item.id)}
                     >
                       {item.label}
@@ -411,7 +430,10 @@ export default function Header() {
                 })}
               </nav>
             </div>
-             <span onClick={() => openSidebar(content, "left")} className="asideLayout_options optionLink ">
+            <span
+              onClick={() => openSidebar(content, "left")}
+              className="asideLayout_options optionLink "
+            >
               Language
             </span>
           </div>
@@ -437,8 +459,9 @@ export default function Header() {
                     <Link
                       key={item.id}
                       href={item.href}
-                      className={`block asideLayout_options optionLink  ${isActive ? "optionActiveNoBt" : ""
-                        }`}
+                      className={`block asideLayout_options optionLink  ${
+                        isActive ? "optionActiveNoBt" : ""
+                      }`}
                       onClick={() => setActiveSection(item.id)}
                     >
                       {item.label}
@@ -447,7 +470,10 @@ export default function Header() {
                 })}
               </nav>
             </div>
-             <span onClick={() => openSidebar(content, "left")} className="asideLayout_options optionLink ">
+            <span
+              onClick={() => openSidebar(content, "left")}
+              className="asideLayout_options optionLink "
+            >
               Language
             </span>
           </div>
@@ -456,7 +482,57 @@ export default function Header() {
     );
   }
 
+  function Home() {
+    useEffect(() => {
+      setIsFloatElement(true);
 
+      return () => {
+        setIsFloatElement(false);
+      };
+    }, []);
+    return (
+      <>
+        <div className="absolute z-10 inset-0 w-full h-full bg-black/50 flex justify-center items-center flex-col px-4 py-8">
+          <div className="mb-4 md:mb-6 lg:mb-8 xl:mb-10">
+            <span className="text-white text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold">
+              Wind
+            </span>
+          </div>
+          <nav className="flex justify-center items-center gap-2 md:gap-3 lg:gap-4 xl:gap-6 flex-wrap px-4">
+            {navigationItems
+              .filter((item) => item.id !== "home")
+              .map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className={`block optionHome p-2 md:p-3 lg:p-4 text-sm md:text-base lg:text-xl whitespace-nowrap
+                  }`}
+                    onClick={() => setActiveSection(item.id)}
+                  >
+                    [ {item.label} ]
+                  </Link>
+                );
+              })}
+          </nav>
+          {isHonest && (
+            <div className="mt-4 md:mt-6 lg:mt-8 xl:mt-10 animate-fade-in-up">
+              <Image
+                loading="lazy"
+                priority={false}
+                className="w-20 h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40"
+                alt="bucket give me a job"
+                src={"/images/gaj.png"}
+                width={150}
+                height={150}
+              />
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
   return (
     <>
       {pathname === "/photo" && <HeaderPhoto />}
@@ -465,6 +541,7 @@ export default function Header() {
       {pathname === "/design" && <HeaderDesign />}
       {pathname === "/tatto" && <HeaderTatto />}
       {pathname === "/contact" && <HeaderContact />}
+      {pathname === "/" && <Home />}
     </>
   );
 }
